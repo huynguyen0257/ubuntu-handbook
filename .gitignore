@@ -1,0 +1,9 @@
+# Temperature monitoring logs
+TEMPERATURE_LOAD_MONITORING/temperature_log.txt
+
+# Other common ignores
+*.log
+*.tmp
+.DS_Store
+.vscode/
+.idea/

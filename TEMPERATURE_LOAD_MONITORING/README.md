@@ -1,66 +1,95 @@
-# Temperature and System Load Monitoring Handover
+# 🌡️ Temperature and System Load Monitoring Handover
 
-## 1. Objective
+## 📋 Overview
 
-To continuously monitor CPU and VRM temperatures, alongside system load (CPU usage) for a prolonged period (6 hours) while Docker containers are running under load, ensuring hardware stability and identifying potential overheating issues.
+This document provides a comprehensive handover for temperature and system load monitoring procedures implemented to ensure hardware stability during extended Docker container operations.
 
-## 2. Monitoring Setup
+---
 
-### 2.1. Tooling
+## 🎯 1. Objective
 
-Tool: lm-sensors
-Purpose: Core utility for reading hardware sensor data (CPU/Core/NVMe temps, potentially VRM).
-Status: Installed and Configured.
+**Primary Goal:** Continuously monitor CPU and VRM temperatures alongside system load (CPU usage) for a prolonged period (6 hours) while Docker containers are running under load.
 
-Tool: monitor_temp.sh
-Purpose: Custom Bash script to automate temperature logging every 2 minutes for 6 hours.
-Status: Created and Tested.
+**Key Benefits:**
+- Ensure hardware stability
+- Identify potential overheating issues
+- Validate system performance under sustained load
 
-Tool: htop / docker stats
-Purpose: Used for real-time load visualization and Docker container resource usage.
-Status: Available.
+---
 
-### 2.2. Script Details (monitor_temp.sh)
+## ⚙️ 2. Monitoring Setup
 
-The script is configured to run in the background (&) and suppress common I/O errors from sensors readings (2>/dev/null).
+### 🔧 2.1. Tooling
 
-Parameter: Log File
-Value: temperature_log.txt
-Description: Output file for all recorded data.
+| Tool | Purpose | Status |
+|------|---------|--------|
+| **lm-sensors** | Core utility for reading hardware sensor data (CPU/Core/NVMe temps, potentially VRM) | ✅ Installed and Configured |
+| **monitor_temp.sh** | Custom Bash script to automate temperature logging every 2 minutes for 6 hours | ✅ Created and Tested |
+| **htop / docker stats** | Real-time load visualization and Docker container resource usage | ✅ Available |
 
-Parameter: Interval
-Value: 120 seconds (2 mins)
-Description: Frequency of data logging.
+### 📝 2.2. Script Details (`monitor_temp.sh`)
 
-Parameter: Duration
-Value: 21,600 seconds (6 hours)
-Description: Total monitoring duration.
+**Configuration:**
+- Runs in background (`&`)
+- Suppresses common I/O errors from sensor readings (`2>/dev/null`)
 
-Parameter: Filtering
-Value: grep -E 'Package id|Tdie|Core|temp|Adapter|fan'
-Description: Filters for key temperature, fan, and chip readings.
+**Parameters:**
 
-### 2.3. Execution Command
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| **Log File** | `temperature_log.txt` | Output file for all recorded data |
+| **Interval** | 120 seconds (2 mins) | Frequency of data logging |
+| **Duration** | 21,600 seconds (6 hours) | Total monitoring duration |
+| **Filtering** | `grep -E 'Package id\|Tdie\|Core\|temp\|Adapter\|fan'` | Filters for key temperature, fan, and chip readings |
+
+### 🚀 2.3. Execution Command
 
 The script was executed using the following command to run in the background:
 
+```bash
 ./monitor_temp.sh &
+```
 
-## 3. Handover Actions and Verification
+---
 
-Action: Monitor Script Status
-Status: Running/Complete.
-Verification/Notes: Check using pgrep -f monitor_temp.sh. If it is no longer listed, the 6-hour test is complete.
+## ✅ 3. Handover Actions and Verification
 
-Action: Review Log Data
-Status: Pending Review
-Verification/Notes: The results are in the temperature_log.txt file. Review this file for maximum recorded temperatures (Max CPU/VRM).
+### 📊 Action Items
 
-Action: VRM Monitoring
-Status: Limited/Not Explicit
-Verification/Notes: VRM temperature may not be explicitly labeled in the sensors output. Look for high readings under labels like tempX, Aux, or specific chip names (e.g., nct6790).
+| Action | Status | Verification/Notes |
+|--------|--------|-------------------|
+| **Monitor Script Status** | Running/Complete | Check using `pgrep -f monitor_temp.sh`. If not listed, the 6-hour test is complete |
+| **Review Log Data** | Pending Review | Results in `temperature_log.txt`. Review for maximum recorded temperatures (Max CPU/VRM) |
+| **VRM Monitoring** | Limited/Not Explicit | VRM temperature may not be explicitly labeled. Look for high readings under labels like `tempX`, `Aux`, or specific chip names (e.g., `nct6790`) |
 
-Next Step for Receiving Team:
-1. Analyze temperature_log.txt.
-2. Ensure CPU/Core temperatures remain below the maximum safe operating temperature (Tjunction Max, typically 90°C-100°C for modern CPUs).
-3. If VRM temperature is found, ensure it remains below 100°C (typical maximum for many VRM components).
+### 🔍 Next Steps for Receiving Team
+
+1. **Analyze** `temperature_log.txt`
+2. **Verify** CPU/Core temperatures remain below maximum safe operating temperature
+   - **Tjunction Max:** typically 90°C-100°C for modern CPUs
+3. **Check** VRM temperature (if found) remains below 100°C
+   - **Typical maximum** for many VRM components
+
+---
+
+## 📈 Temperature Thresholds
+
+| Component | Safe Operating Range | Critical Threshold |
+|-----------|---------------------|-------------------|
+| **CPU/Core** | < 90°C | 100°C |
+| **VRM** | < 100°C | 110°C |
+
+---
+
+## 📁 File Structure
+
+```
+TEMPERATURE_LOAD_MONITORING/
+├── README.md              # This documentation
+├── monitor_temp.sh        # Monitoring script
+└── temperature_log.txt    # Log output file
+```
+
+---
+
+*Last Updated: [Date] | Status: Monitoring Complete*
