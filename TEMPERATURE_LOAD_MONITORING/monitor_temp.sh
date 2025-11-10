@@ -1,7 +1,7 @@
 #!/bin/bash
 LOGFILE="temperature_log.txt"
 INTERVAL=120  # Ghi log sau mỗi 120 giây (2 phút)
-DURATION=21600 # 6 tiếng * 3600 giây/tiếng = 21600 giây
+DURATION=21600000 # 6 tiếng * 3600 giây/tiếng = 21600 giây
 
 echo "--- Bắt đầu Giám sát Nhiệt độ CPU/VRM: $(date) ---" >> $LOGFILE
 START_TIME=$(date +%s)
